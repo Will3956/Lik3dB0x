@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gallery — LIK3DBOX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rubik:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #060a0b;
+    --panel: #0c1a1c;
+    --line: #1c3a3c;
+    --teal: #2fd9d4;
+    --teal-bright: #9dfff5;
+    --ember: #ff9a4d;
+    --text: #d9f2f1;
+    --text-dim: #7fa3a1;
+    --text-dimmer: #4d6a68;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html, body{ height:100%; }
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Rubik', sans-serif;
+    overflow:hidden;
+  }
+  .pixel{ font-family:'Press Start 2P', monospace; }
+  .mono{ font-family:'JetBrains Mono', monospace; }
+  a{ color:inherit; text-decoration:none; }
+
+  /* ---------- top bar ---------- */
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px clamp(20px,5vw,64px);
+    background:linear-gradient(to bottom, rgba(4,8,9,0.95), rgba(4,8,9,0));
+    pointer-events:none;
+  }
+  header > *{ pointer-events:auto; }
+  .brand{ display:flex; align-items:center; gap:10px; }
+  .brand-mark{
+    width:30px; height:30px; background:var(--teal); position:relative;
+    clip-path:polygon(20% 0,80% 0,100% 20%,100% 80%,80% 100%,20% 100%,0 80%,0 20%);
+    box-shadow:0 0 14px 2px rgba(47,217,212,0.6);
+  }
+  .brand-name{ font-size:13px; letter-spacing:1px; }
+  .brand-name .accent{ color:var(--teal-bright); }
+
+  .back-link{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:12px; letter-spacing:1px; text-transform:uppercase; font-weight:700;
+    color:var(--teal-bright); border:1px solid var(--line);
+    background:rgba(8,18,19,0.7); backdrop-filter:blur(4px);
+    padding:10px 16px; cursor:pointer; transition:border-color .2s;
+    clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+  }
+  .back-link:hover{ border-color:var(--teal); }
+
+  /* ---------- slides ---------- */
+  .slides{
+    height:100svh; width:100vw;
+    overflow-y:scroll; scroll-snap-type:y mandatory;
+    scrollbar-width:none;
+  }
+  .slides::-webkit-scrollbar{ display:none; }
+
+  .slide{
+    position:relative; height:100svh; width:100vw;
+    scroll-snap-align:start; scroll-snap-stop:always;
+    display:flex; align-items:center; justify-content:center;
+    background:#000;
+  }
+  .slide img{
+    width:100%; height:100%; object-fit:contain;
+    background:#000;
+  }
+  .slide-index{
+    position:absolute; top:24px; right:clamp(20px,5vw,64px);
+    font-size:11px; letter-spacing:2px; color:var(--text-dimmer);
+    background:rgba(6,10,11,0.6); padding:6px 12px; border:1px solid var(--line);
+  }
+  .slide-index b{ color:var(--teal-bright); }
+
+  .slide-caption{
+    position:absolute; left:0; right:0; bottom:0;
+    padding:36px clamp(20px,5vw,64px) 28px;
+    background:linear-gradient(to top, rgba(4,8,9,0.85), transparent);
+  }
+  .slide-caption .eyebrow{
+    font-size:11px; letter-spacing:3px; color:var(--ember); text-transform:uppercase; margin-bottom:8px;
+  }
+  .slide-caption h2{ font-size:clamp(18px,3vw,26px); }
+
+  /* ---------- dots nav ---------- */
+  .dots{
+    position:fixed; right:clamp(16px,4vw,36px); top:50%; transform:translateY(-50%);
+    z-index:40; display:flex; flex-direction:column; gap:14px;
+  }
+  .dots button{
+    width:10px; height:10px; border-radius:50%;
+    background:transparent; border:1px solid var(--line); cursor:pointer; padding:0;
+    transition:background .2s, border-color .2s, transform .2s;
+  }
+  .dots button.active{
+    background:var(--teal); border-color:var(--teal);
+    box-shadow:0 0 8px var(--teal); transform:scale(1.3);
+  }
+
+  /* ---------- arrows ---------- */
+  .nav-arrow{
+    position:fixed; left:50%; transform:translateX(-50%);
+    z-index:40; width:38px; height:38px;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(8,18,19,0.7); border:1px solid var(--line);
+    color:var(--teal-bright); cursor:pointer; font-size:16px;
+    transition:border-color .2s, background .2s;
+  }
+  .nav-arrow:hover{ border-color:var(--teal); background:rgba(8,18,19,0.9); }
+  .nav-arrow.up{ top:14px; }
+  .nav-arrow.down{ bottom:14px; }
+  .nav-arrow.hide{ opacity:0.25; pointer-events:none; }
+
+  @media(max-width:640px){
+    .dots{ right:10px; gap:10px; }
+    .slide-caption{ padding:26px 18px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-mark"></div>
+    <div class="brand-name pixel" style="font-size:10px;">LIK3D<span class="accent">BOX</span></div>
+  </div>
+  <a href="index.html" class="back-link">← Back to site</a>
+</header>
+
+<div class="slides" id="slides">
+
+  <div class="slide" data-title="Overworld" data-eyebrow="01 // Screenshot">
+    <img src="image1.png" alt="LIK3DBOX screenshot 1">
+    <div class="slide-index mono"><b>01</b> / 04</div>
+    <div class="slide-caption">
+      <div class="eyebrow mono">01 // Overworld</div>
+      <h2>Spawn and the surrounding boxlands</h2>
+    </div>
+  </div>
+
+  <div class="slide" data-title="Ore Cube" data-eyebrow="02 // Screenshot">
+    <img src="image2.png" alt="LIK3DBOX screenshot 2">
+    <div class="slide-index mono"><b>02</b> / 04</div>
+    <div class="slide-caption">
+      <div class="eyebrow mono">02 // Ore Cube</div>
+      <h2>One of the giant ore cubes mid-regen</h2>
+    </div>
+  </div>
+
+  <div class="slide" data-title="Trading Post" data-eyebrow="03 // Screenshot">
+    <img src="image3.png" alt="LIK3DBOX screenshot 3">
+    <div class="slide-index mono"><b>03</b> / 04</div>
+    <div class="slide-caption">
+      <div class="eyebrow mono">03 // Trading Post</div>
+      <h2>The stationary trading villager setup</h2>
+    </div>
+  </div>
+
+  <div class="slide" data-title="Deep Dark" data-eyebrow="04 // Screenshot">
+    <img src="image4.png" alt="LIK3DBOX screenshot 4">
+    <div class="slide-index mono"><b>04</b> / 04</div>
+    <div class="slide-caption">
+      <div class="eyebrow mono">04 // Deep Dark</div>
+      <h2>Deepslate ore mining down in the dark</h2>
+    </div>
+  </div>
+
+</div>
+
+<div class="dots" id="dots"></div>
+<button class="nav-arrow up hide" id="upArrow" aria-label="Previous image">▲</button>
+<button class="nav-arrow down" id="downArrow" aria-label="Next image">▼</button>
+
+<script>
+  const slidesEl = document.getElementById('slides');
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const dotsEl = document.getElementById('dots');
+  const upArrow = document.getElementById('upArrow');
+  const downArrow = document.getElementById('downArrow');
+
+  slides.forEach((_, i) => {
+    const b = document.createElement('button');
+    if(i === 0) b.classList.add('active');
+    b.addEventListener('click', () => scrollToSlide(i));
+    dotsEl.appendChild(b);
+  });
+  const dots = Array.from(dotsEl.children);
+
+  function scrollToSlide(i){
+    slides[i].scrollIntoView({ behavior:'smooth' });
+  }
+
+  function currentIndex(){
+    const h = window.innerHeight;
+    return Math.round(slidesEl.scrollTop / h);
+  }
+
+  function updateUI(){
+    const idx = Math.min(slides.length - 1, Math.max(0, currentIndex()));
+    dots.forEach((d,i) => d.classList.toggle('active', i === idx));
+    upArrow.classList.toggle('hide', idx === 0);
+    downArrow.classList.toggle('hide', idx === slides.length - 1);
+  }
+
+  slidesEl.addEventListener('scroll', () => {
+    window.requestAnimationFrame(updateUI);
+  });
+
+  upArrow.addEventListener('click', () => scrollToSlide(Math.max(0, currentIndex() - 1)));
+  downArrow.addEventListener('click', () => scrollToSlide(Math.min(slides.length - 1, currentIndex() + 1)));
+
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'ArrowDown' || e.key === 'PageDown'){
+      e.preventDefault();
+      scrollToSlide(Math.min(slides.length - 1, currentIndex() + 1));
+    }
+    if(e.key === 'ArrowUp' || e.key === 'PageUp'){
+      e.preventDefault();
+      scrollToSlide(Math.max(0, currentIndex() - 1));
+    }
+  });
+
+  updateUI();
+</script>
+
+</body>
+</html>
