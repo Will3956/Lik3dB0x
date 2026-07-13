@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LIK3DBOX — Made on Minehut</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rubik:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #060a0b;
+    --bg-1: #0a1315;
+    --panel: #0c1a1c;
+    --panel-2: #0f2224;
+    --line: #1c3a3c;
+    --teal-deep: #0e3a3d;
+    --teal: #2fd9d4;
+    --teal-bright: #9dfff5;
+    --ember: #ff9a4d;
+    --ember-dim: #b8672c;
+    --text: #d9f2f1;
+    --text-dim: #7fa3a1;
+    --text-dimmer: #4d6a68;
+    --rare-common: #b9c9c8;
+    --rare-uncommon: #4ee08a;
+    --rare-rare: #4ec3f5;
+    --rare-epic: #b678f5;
+    --rare-legend: #ff9a4d;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Rubik', sans-serif;
+    overflow-x:hidden;
+    position:relative;
+  }
+
+  ::selection{ background:var(--teal); color:#03100f; }
+
+  .pixel{ font-family:'Press Start 2P', monospace; }
+  .mono{ font-family:'JetBrains Mono', monospace; }
+
+  a{ color:inherit; text-decoration:none; }
+
+  /* ---------- ambient particles ---------- */
+  #particles{
+    position:fixed; inset:0; pointer-events:none; z-index:1; overflow:hidden;
+  }
+  .spark{
+    position:absolute; bottom:-10px; width:3px; height:3px; border-radius:50%;
+    background:var(--teal-bright);
+    box-shadow:0 0 6px 2px rgba(64,255,240,0.7);
+    animation:rise linear infinite;
+    opacity:0;
+  }
+  @keyframes rise{
+    0%{ transform:translateY(0) translateX(0); opacity:0; }
+    8%{ opacity:.9; }
+    90%{ opacity:.5; }
+    100%{ transform:translateY(-110vh) translateX(var(--drift,20px)); opacity:0; }
+  }
+
+  /* ---------- nav ---------- */
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px clamp(20px,5vw,64px);
+    background:linear-gradient(to bottom, rgba(4,8,9,0.9), rgba(4,8,9,0));
+    backdrop-filter:blur(2px);
+  }
+  .brand{ display:flex; align-items:center; gap:10px; }
+  .brand-mark{
+    width:34px; height:34px; background:var(--teal); position:relative;
+    clip-path:polygon(20% 0,80% 0,100% 20%,100% 80%,80% 100%,20% 100%,0 80%,0 20%);
+    box-shadow:0 0 18px 2px rgba(47,217,212,0.6);
+  }
+  .brand-name{ font-size:15px; letter-spacing:1px; }
+  .brand-name .accent{ color:var(--teal-bright); }
+
+  nav ul{
+    list-style:none; display:flex; gap:clamp(16px,3vw,36px);
+    font-size:13px; font-weight:600; letter-spacing:.5px; text-transform:uppercase;
+  }
+  nav ul li a{
+    color:var(--text-dim); transition:color .2s;
+    padding-bottom:4px; border-bottom:2px solid transparent;
+  }
+  nav ul li a:hover{ color:var(--teal-bright); border-color:var(--teal); }
+  .nav-cta{
+    display:none;
+  }
+  @media(min-width:760px){
+    .nav-cta{ display:block; }
+  }
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:11px 20px; font-weight:700; font-size:13px; letter-spacing:.5px;
+    text-transform:uppercase; cursor:pointer; border:none;
+    position:relative; transition:transform .15s ease, filter .15s ease;
+  }
+  .btn:active{ transform:translateY(1px); }
+  .btn-primary{
+    background:var(--teal); color:#03100f;
+    clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+    box-shadow:0 0 24px rgba(47,217,212,0.35);
+  }
+  .btn-primary:hover{ filter:brightness(1.15); }
+  .btn-ghost{
+    background:transparent; color:var(--teal-bright);
+    border:1px solid var(--line);
+    clip-path:polygon(8px 0,100% 0,100% calc(100% - 8px),calc(100% - 8px) 100%,0 100%,0 8px);
+  }
+  .btn-ghost:hover{ border-color:var(--teal); }
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative; min-height:100svh; display:flex; flex-direction:column;
+    align-items:center; justify-content:flex-end; text-align:center;
+    padding:140px 20px 70px;
+    background-image:
+      linear-gradient(to bottom, rgba(4,7,8,0.35) 0%, rgba(4,7,8,0.35) 45%, var(--bg) 100%),
+      url('pack.png');
+    background-size:cover; background-position:center 30%;
+    z-index:2;
+  }
+  .hero-eyebrow{
+    font-size:11px; letter-spacing:3px; color:var(--teal-bright);
+    text-transform:uppercase; margin-bottom:18px;
+    text-shadow:0 0 12px rgba(64,255,240,.6);
+  }
+  .hero-eyebrow::before{ content:'▸ '; color:var(--ember); }
+  .hero h1{
+    font-size:clamp(30px, 6vw, 58px);
+    line-height:1.15;
+    max-width:820px;
+    margin-bottom:18px;
+    text-shadow:0 0 30px rgba(0,0,0,.6);
+  }
+  .hero p.lead{
+    max-width:560px; color:var(--text-dim); font-size:16px; line-height:1.6;
+    margin-bottom:34px;
+  }
+  .ip-box{
+    display:flex; align-items:stretch; gap:0;
+    background:rgba(8,18,19,0.85); border:1px solid var(--line);
+    backdrop-filter:blur(6px);
+    box-shadow:0 0 30px rgba(0,0,0,.4);
+  }
+  .ip-box .ip-label{
+    display:flex; align-items:center; padding:0 16px;
+    font-size:11px; color:var(--text-dimmer); letter-spacing:1.5px; text-transform:uppercase;
+    border-right:1px solid var(--line);
+  }
+  .ip-box .ip-value{
+    padding:16px 20px; font-size:18px; font-weight:700; color:var(--teal-bright);
+    letter-spacing:1px; min-width:210px; text-align:left;
+  }
+  .ip-box button{
+    background:var(--teal); color:#03100f; border:none; padding:0 22px;
+    font-weight:800; font-size:12px; letter-spacing:1px; text-transform:uppercase; cursor:pointer;
+    transition:background .15s;
+  }
+  .ip-box button:hover{ background:var(--teal-bright); }
+  .hero-tags{
+    display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:22px;
+  }
+  .tag{
+    font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--text-dim);
+    border:1px solid var(--line); padding:6px 12px;
+  }
+  .tag .dot{ display:inline-block; width:6px; height:6px; background:var(--ember); margin-right:6px;
+    box-shadow:0 0 6px var(--ember); border-radius:1px; }
+
+  /* ---------- section shell ---------- */
+  section{ position:relative; z-index:2; padding:100px clamp(20px,5vw,64px); }
+  .section-head{ max-width:640px; margin:0 auto 56px; text-align:center; }
+  .section-eyebrow{
+    font-size:11px; letter-spacing:3px; color:var(--ember); text-transform:uppercase;
+    margin-bottom:14px;
+  }
+  .section-head h2{ font-size:clamp(24px,4vw,36px); margin-bottom:14px; }
+  .section-head p{ color:var(--text-dim); font-size:15px; line-height:1.7; }
+
+  .divider{
+    display:flex; align-items:center; justify-content:center; gap:8px; margin:0 auto 56px;
+    max-width:200px;
+  }
+  .divider span{ height:2px; flex:1; background:linear-gradient(to right, transparent, var(--line)); }
+  .divider span.r{ background:linear-gradient(to left, transparent, var(--line)); }
+  .divider .diamond{ width:8px; height:8px; background:var(--teal); transform:rotate(45deg);
+    box-shadow:0 0 8px var(--teal); }
+
+  /* ---------- pixel card frame ---------- */
+  .pcard{
+    position:relative; background:var(--panel);
+    border:1px solid var(--line);
+    padding:26px;
+  }
+  .pcard::before, .pcard::after{
+    content:''; position:absolute; width:10px; height:10px;
+    background:var(--teal); opacity:.9;
+  }
+  .pcard::before{ top:-1px; left:-1px; box-shadow:0 0 8px var(--teal); }
+  .pcard::after{ bottom:-1px; right:-1px; box-shadow:0 0 8px var(--teal); }
+
+  /* ---------- worlds ---------- */
+  .worlds-grid{
+    display:grid; gap:22px; max-width:1120px; margin:0 auto;
+    grid-template-columns:repeat(auto-fit, minmax(240px,1fr));
+  }
+  .world-card{ transition:transform .2s ease, border-color .2s ease; }
+  .world-card:hover{ transform:translateY(-6px); border-color:var(--teal); }
+  .world-index{
+    font-size:11px; color:var(--text-dimmer); letter-spacing:2px; margin-bottom:14px;
+  }
+  .world-card h3{ font-size:19px; margin-bottom:10px; color:var(--teal-bright); }
+  .world-card p{ font-size:13.5px; color:var(--text-dim); line-height:1.65; margin-bottom:16px; }
+  .world-meta{ display:flex; gap:14px; font-size:11px; color:var(--text-dimmer); flex-wrap:wrap; }
+  .world-meta b{ color:var(--teal); }
+
+  /* ---------- items ---------- */
+  .items-grid{
+    display:grid; gap:18px; max-width:1120px; margin:0 auto;
+    grid-template-columns:repeat(auto-fit, minmax(220px,1fr));
+  }
+  .item-card{
+    display:flex; gap:16px; align-items:flex-start;
+    border-left:3px solid var(--rarity, var(--teal));
+  }
+  .item-icon{
+    flex:none; width:46px; height:46px; background:var(--panel-2);
+    border:1px solid var(--line); display:flex; align-items:center; justify-content:center;
+    font-size:20px; position:relative;
+  }
+  .item-icon::after{
+    content:''; position:absolute; inset:0; box-shadow:inset 0 0 14px rgba(0,0,0,.6);
+  }
+  .item-name{ font-size:14.5px; font-weight:700; color:var(--rarity, var(--teal)); margin-bottom:4px; }
+  .item-rarity{ font-size:10px; letter-spacing:1.5px; text-transform:uppercase; color:var(--text-dimmer); margin-bottom:8px; }
+  .item-desc{ font-size:12.5px; color:var(--text-dim); line-height:1.6; }
+
+  /* ---------- ranks ---------- */
+  .ranks-grid{
+    display:grid; gap:20px; max-width:1180px; margin:0 auto;
+    grid-template-columns:repeat(auto-fit, minmax(250px,1fr));
+    align-items:stretch;
+  }
+  .rank-card{ display:flex; flex-direction:column; }
+  .rank-card.featured{ border-color:var(--ember); }
+  .rank-card.featured::before, .rank-card.featured::after{ background:var(--ember); box-shadow:0 0 8px var(--ember); }
+  .rank-badge{
+    align-self:flex-start; font-size:10px; letter-spacing:1.5px; text-transform:uppercase;
+    color:#1a0d05; background:var(--ember); padding:4px 8px; margin-bottom:16px;
+  }
+  .rank-name{ font-size:20px; margin-bottom:6px; }
+  .rank-price{ font-size:26px; font-weight:800; color:var(--teal-bright); margin-bottom:18px; }
+  .rank-price span{ font-size:12px; color:var(--text-dimmer); font-weight:500; }
+  .rank-features{ list-style:none; flex:1; margin-bottom:22px; }
+  .rank-features li{
+    font-size:13px; color:var(--text-dim); padding:8px 0; border-top:1px solid var(--line);
+    display:flex; gap:8px;
+  }
+  .rank-features li:first-child{ border-top:none; }
+  .rank-features li::before{ content:'◆'; color:var(--teal); font-size:9px; margin-top:4px; }
+  .rank-card.featured .rank-features li::before{ color:var(--ember); }
+
+  /* ---------- discord cta ---------- */
+  .discord-band{
+    max-width:1120px; margin:0 auto; position:relative;
+    background:radial-gradient(circle at 20% 20%, rgba(47,217,212,0.14), transparent 60%), var(--panel);
+    border:1px solid var(--line);
+    padding:56px clamp(24px,5vw,64px);
+    display:flex; flex-wrap:wrap; gap:32px; align-items:center; justify-content:space-between;
+  }
+  .discord-band h2{ font-size:clamp(22px,3.4vw,30px); margin-bottom:10px; }
+  .discord-band p{ color:var(--text-dim); font-size:14.5px; max-width:420px; line-height:1.6; }
+  .discord-stats{ display:flex; gap:34px; margin-top:20px; }
+  .discord-stats div b{ display:block; font-size:22px; color:var(--teal-bright); }
+  .discord-stats div span{ font-size:11px; color:var(--text-dimmer); text-transform:uppercase; letter-spacing:1px; }
+
+  /* ---------- footer ---------- */
+  footer{
+    position:relative; z-index:2; padding:50px clamp(20px,5vw,64px) 34px;
+    border-top:1px solid var(--line); text-align:center;
+  }
+  footer .brand{ justify-content:center; margin-bottom:14px; }
+  footer .foot-links{
+    display:flex; gap:22px; justify-content:center; flex-wrap:wrap; margin:18px 0;
+    font-size:12.5px; color:var(--text-dim);
+  }
+  footer .foot-links a:hover{ color:var(--teal-bright); }
+  footer .disclaimer{ font-size:11px; color:var(--text-dimmer); max-width:520px; margin:10px auto 0; line-height:1.6; }
+
+  .copied-toast{
+    position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--teal); color:#03100f; font-weight:700; font-size:12.5px;
+    padding:12px 22px; opacity:0; pointer-events:none; transition:all .25s ease; z-index:100;
+    letter-spacing:.5px;
+  }
+  .copied-toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  @media(max-width:760px){
+    nav{ display:none; }
+    .ip-box{ flex-direction:column; width:100%; max-width:340px; }
+    .ip-box .ip-label{ border-right:none; border-bottom:1px solid var(--line); padding:10px 16px; }
+    .ip-box .ip-value{ text-align:center; }
+  }
+</style>
+</head>
+<body>
+
+<div id="particles"></div>
+
+<div class="copied-toast" id="toast">IP COPIED TO CLIPBOARD</div>
+
+<header>
+  <div class="brand">
+    <div class="brand-mark"></div>
+    <div class="brand-name pixel" style="font-size:12px;">LIK3D<span class="accent">BOX</span></div>
+  </div>
+  <nav>
+    <ul>
+      <li><a href="#worlds">Worlds</a></li>
+      <li><a href="#items">Items</a></li>
+      <li><a href="#ranks">Ranks</a></li>
+      <li><a href="#discord">Discord</a></li>
+    </ul>
+  </nav>
+  <a href="#discord" class="btn btn-primary nav-cta">Join Now</a>
+</header>
+
+<section class="hero">
+  <div class="hero-eyebrow mono">Made on Minehut · Survival Multiplayer</div>
+  <h1 class="pixel" style="font-size:clamp(22px,4.4vw,38px); letter-spacing:1px;">Every box hides<br>another world.</h1>
+  <p class="lead">LIK3DBOX is a survival network built around linked worlds, hand-crafted loot, and a rank system that actually means something. No pay-to-win, no dead spawn — just a server people stick around for.</p>
+
+  <div class="ip-box mono">
+    <div class="ip-label">Server IP</div>
+    <div class="ip-value" id="ipValue">play.lik3dbox.xyz</div>
+    <button id="copyBtn">Copy</button>
+  </div>
+
+  <div class="hero-tags">
+    <span class="tag"><span class="dot"></span>3 Box Dimensions</span>
+    <span class="tag"><span class="dot"></span>Custom Items</span>
+    <span class="tag"><span class="dot"></span>Free &amp; Earned Ranks</span>
+    <span class="tag"><span class="dot"></span>Java &amp; Bedrock</span>
+  </div>
+</section>
+
+<section id="worlds">
+  <div class="section-head">
+    <div class="section-eyebrow">The Network</div>
+    <h2>One box. Three dimensions.</h2>
+    <p>Every portal in spawn leads into the same box map reshaped into a different dimension. Same seed, different rules, different look.</p>
+  </div>
+  <div class="worlds-grid">
+
+    <div class="pcard world-card">
+      <div class="world-index mono">DIMENSION // 01</div>
+      <h3>The Boxlands</h3>
+      <p>The core box map — a OneBlock-style world stacked in floating cubes. Break the box, get the drop, don't fall off the edge.</p>
+      <div class="world-meta mono"><span><b>PvP</b> Off</span><span><b>Reset</b> Seasonal</span></div>
+    </div>
+
+    <div class="pcard world-card">
+      <div class="world-index mono">DIMENSION // 02</div>
+      <h3>Voidframe</h3>
+      <p>The same box map reshaped into a darker, low-light dimension with its own block set, mobs, and drop table. A different look, a different fight.</p>
+      <div class="world-meta mono"><span><b>PvP</b> On</span><span><b>Danger</b> High</span></div>
+    </div>
+
+    <div class="pcard world-card">
+      <div class="world-index mono">DIMENSION // 03</div>
+      <h3>Event Grounds</h3>
+      <p>The box map rebuilt weekly for whatever's running — boss fights, PvP tournaments, parkour runs. Loot here doesn't exist anywhere else.</p>
+      <div class="world-meta mono"><span><b>PvP</b> Event</span><span><b>Rotation</b> Weekly</span></div>
+    </div>
+
+  </div>
+</section>
+
+<section id="items" style="background:linear-gradient(to bottom, transparent, rgba(14,58,61,0.08), transparent);">
+  <div class="section-head">
+    <div class="section-eyebrow">The Armory</div>
+    <h2>Custom items with actual weight</h2>
+    <p>Every item below is hand-modeled and hand-balanced — no reskinned vanilla tools. Higher rarities are drop-only, never sold.</p>
+  </div>
+  <div class="items-grid">
+
+    <div class="pcard item-card" style="--rarity:var(--rare-legend);">
+      <div class="item-icon">⛏</div>
+      <div>
+        <div class="item-name">Voidforged Pickaxe</div>
+        <div class="item-rarity">Legendary</div>
+        <div class="item-desc">Mines 3x3 tunnels and auto-smelts ore. Drops only from Voidframe's final chamber.</div>
+      </div>
+    </div>
+
+    <div class="pcard item-card" style="--rarity:var(--rare-epic);">
+      <div class="item-icon">🗡</div>
+      <div>
+        <div class="item-name">Ember Core Blade</div>
+        <div class="item-rarity">Epic</div>
+        <div class="item-desc">Ignites on hit and applies a stacking burn. Crafted from Event Arena boss drops.</div>
+      </div>
+    </div>
+
+    <div class="pcard item-card" style="--rarity:var(--rare-rare);">
+      <div class="item-icon">🥾</div>
+      <div>
+        <div class="item-name">Cryosync Boots</div>
+        <div class="item-rarity">Rare</div>
+        <div class="item-desc">Immunity to freezing and a permanent frost-walker enchant. Common Boxlands drop.</div>
+      </div>
+    </div>
+
+    <div class="pcard item-card" style="--rarity:var(--rare-legend);">
+      <div class="item-icon">🔨</div>
+      <div>
+        <div class="item-name">Boxbreaker Hammer</div>
+        <div class="item-rarity">Legendary</div>
+        <div class="item-desc">Breaks a 3-block radius in Boxlands only. The single most-traded item on the server.</div>
+      </div>
+    </div>
+
+    <div class="pcard item-card" style="--rarity:var(--rare-uncommon);">
+      <div class="item-icon">💠</div>
+      <div>
+        <div class="item-name">Lumen Shard</div>
+        <div class="item-rarity">Uncommon</div>
+        <div class="item-desc">Crafting material for most custom gear. Farmed from Voidframe's night spawns.</div>
+      </div>
+    </div>
+
+    <div class="pcard item-card" style="--rarity:var(--rare-epic);">
+      <div class="item-icon">🧥</div>
+      <div>
+        <div class="item-name">Wraith Cloak</div>
+        <div class="item-rarity">Epic</div>
+        <div class="item-desc">Grants brief invisibility on low health. One-time seasonal drop from Event Grounds, never reissued.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section id="ranks">
+  <div class="section-head">
+    <div class="section-eyebrow">Progression</div>
+    <h2>Ranks you earn or grab</h2>
+    <p>Free ranks unlock through playtime and votes. Paid ranks skip the wait — nothing here affects PvP balance.</p>
+  </div>
+  <div class="ranks-grid">
+
+    <div class="pcard rank-card">
+      <div class="rank-name">Wanderer</div>
+      <div class="rank-price">Free</div>
+      <ul class="rank-features">
+        <li>Access to all 6 worlds</li>
+        <li>1 player warp</li>
+        <li>Basic chat colors</li>
+        <li>/kit starter (once)</li>
+      </ul>
+      <a href="#discord" class="btn btn-ghost">Start Free</a>
+    </div>
+
+    <div class="pcard rank-card">
+      <div class="rank-name">Voyager</div>
+      <div class="rank-price">$4.99<span>/one-time</span></div>
+      <ul class="rank-features">
+        <li>Everything in Wanderer</li>
+        <li>5 player warps</li>
+        <li>Colored nickname</li>
+        <li>/kit voyager (daily)</li>
+        <li>Priority queue on join</li>
+      </ul>
+      <a href="#discord" class="btn btn-ghost">Get Voyager</a>
+    </div>
+
+    <div class="pcard rank-card featured">
+      <div class="rank-badge">Most Popular</div>
+      <div class="rank-name">Ember</div>
+      <div class="rank-price">$12.99<span>/one-time</span></div>
+      <ul class="rank-features">
+        <li>Everything in Voyager</li>
+        <li>Unlimited warps</li>
+        <li>/kit ember (daily)</li>
+        <li>Access to Event Grounds early queue</li>
+        <li>Custom join message</li>
+      </ul>
+      <a href="#discord" class="btn btn-primary">Get Ember</a>
+    </div>
+
+    <div class="pcard rank-card">
+      <div class="rank-name">Voidwalker</div>
+      <div class="rank-price">$24.99<span>/one-time</span></div>
+      <ul class="rank-features">
+        <li>Everything in Ember</li>
+        <li>WorldEdit access in Voidframe</li>
+        <li>/kit voidwalker (daily)</li>
+        <li>Custom particle trail</li>
+        <li>Direct line to staff for build reviews</li>
+      </ul>
+      <a href="#discord" class="btn btn-ghost">Get Voidwalker</a>
+    </div>
+
+  </div>
+</section>
+
+<section id="discord">
+  <div class="pcard discord-band">
+    <div>
+      <div class="section-eyebrow" style="text-align:left;">Community</div>
+      <h2>The server lives in Discord.</h2>
+      <p>Rank claims, event schedules, market listings, and staff applications all run through the Discord — join before you connect in-game.</p>
+      <div class="discord-stats mono">
+        <div><b>3</b><span>Dimensions</span></div>
+        <div><b>24/7</b><span>Uptime</span></div>
+        <div><b>Weekly</b><span>Events</span></div>
+      </div>
+    </div>
+    <a href="#" class="btn btn-primary" style="font-size:14px; padding:16px 28px;">Join the Discord →</a>
+  </div>
+</section>
+
+<footer>
+  <div class="brand">
+    <div class="brand-mark"></div>
+    <div class="brand-name pixel" style="font-size:12px;">LIK3D<span class="accent">BOX</span></div>
+  </div>
+  <div class="foot-links">
+    <a href="#worlds">Worlds</a>
+    <a href="#items">Items</a>
+    <a href="#ranks">Ranks</a>
+    <a href="#discord">Discord</a>
+  </div>
+  <p class="disclaimer">LIK3DBOX is an independent community server made on Minehut. Not affiliated with, endorsed by, or connected to Mojang, Microsoft, or Minehut.</p>
+</footer>
+
+<script>
+  // ambient particles
+  const field = document.getElementById('particles');
+  const COUNT = 26;
+  for(let i=0;i<COUNT;i++){
+    const s = document.createElement('div');
+    s.className = 'spark';
+    const left = Math.random()*100;
+    const duration = 9 + Math.random()*10;
+    const delay = Math.random()*14;
+    const drift = (Math.random()*60-30) + 'px';
+    s.style.left = left+'vw';
+    s.style.animationDuration = duration+'s';
+    s.style.animationDelay = delay+'s';
+    s.style.setProperty('--drift', drift);
+    field.appendChild(s);
+  }
+
+  // copy IP
+  const copyBtn = document.getElementById('copyBtn');
+  const toast = document.getElementById('toast');
+  copyBtn.addEventListener('click', async () => {
+    const ip = document.getElementById('ipValue').textContent.trim();
+    try{
+      await navigator.clipboard.writeText(ip);
+    }catch(e){
+      const ta = document.createElement('textarea');
+      ta.value = ip; document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+    }
+    toast.classList.add('show');
+    setTimeout(()=>toast.classList.remove('show'), 1800);
+  });
+</script>
+
+</body>
+</html>
