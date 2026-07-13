@@ -371,7 +371,7 @@
     <ul>
       <li><a href="#worlds">Worlds</a></li>
       <li><a href="#items">Items</a></li>
-      <li><a href="#gallery">Gallery</a></li>
+      <li><a href="gallery.html">Gallery</a></li>
       <li><a href="#ranks">Ranks</a></li>
       <li><a href="#discord">Discord</a></li>
     </ul>
@@ -501,35 +501,10 @@
     <h2>A look inside the box</h2>
     <p>Builds, ore cubes, and the trading villager — straight from the live server.</p>
   </div>
-  <div class="gallery-grid">
-
-    <div class="pcard gallery-item" data-full="image1.png">
-      <img src="image1.png" alt="LIK3DBOX screenshot 1" loading="lazy">
-      <div class="gallery-caption mono">01 // Overworld</div>
-    </div>
-
-    <div class="pcard gallery-item" data-full="image2.png">
-      <img src="image2.png" alt="LIK3DBOX screenshot 2" loading="lazy">
-      <div class="gallery-caption mono">02 // Ore Cube</div>
-    </div>
-
-    <div class="pcard gallery-item" data-full="image3.png">
-      <img src="image3.png" alt="LIK3DBOX screenshot 3" loading="lazy">
-      <div class="gallery-caption mono">03 // Trading Post</div>
-    </div>
-
-    <div class="pcard gallery-item" data-full="image4.png">
-      <img src="image4.png" alt="LIK3DBOX screenshot 4" loading="lazy">
-      <div class="gallery-caption mono">04 // Deep Dark</div>
-    </div>
-
+  <div style="display:flex; justify-content:center;">
+    <a href="gallery.html" class="btn btn-primary" style="font-size:14px; padding:16px 28px;">View Full Gallery →</a>
   </div>
 </section>
-
-<div class="lightbox" id="lightbox">
-  <button class="lightbox-close" id="lightboxClose">Close ✕</button>
-  <img src="" alt="Full size screenshot" id="lightboxImg">
-</div>
 
 <section id="ranks">
   <div class="section-head">
@@ -618,7 +593,7 @@
   <div class="foot-links">
     <a href="#worlds">Worlds</a>
     <a href="#items">Items</a>
-    <a href="#gallery">Gallery</a>
+    <a href="gallery.html">Gallery</a>
     <a href="#ranks">Ranks</a>
     <a href="#discord">Discord</a>
   </div>
@@ -659,22 +634,6 @@
     setTimeout(()=>toast.classList.remove('show'), 1800);
   });
 
-  // gallery lightbox
-  const lightbox = document.getElementById('lightbox');
-  const lightboxImg = document.getElementById('lightboxImg');
-  const lightboxClose = document.getElementById('lightboxClose');
-
-  document.querySelectorAll('.gallery-item').forEach(item => {
-    item.addEventListener('click', () => {
-      lightboxImg.src = item.dataset.full;
-      lightbox.classList.add('show');
-    });
-  });
-
-  function closeLightbox(){ lightbox.classList.remove('show'); lightboxImg.src=''; }
-  lightboxClose.addEventListener('click', closeLightbox);
-  lightbox.addEventListener('click', (e) => { if(e.target === lightbox) closeLightbox(); });
-  document.addEventListener('keydown', (e) => { if(e.key === 'Escape') closeLightbox(); });
 </script>
 
 </body>
